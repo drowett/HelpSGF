@@ -1,0 +1,11 @@
+Service/bin/Debug/
+DataAccess/obj/
+Service/obj/Debug/
+WWW/bin/Debug/
+WWW/obj/Debug/netcoreapp2.0/WWW.dll
+WWW/obj/Debug/netcoreapp2.0/WWW.pdb
+AppConfigurationSettings/bin/Debug/
+AppConfigurationSettings/obj/Debug/
+DataAccess/bin/Debug/netcoreapp2.0/AppConfigurationSettings.dll
+DataAccess/bin/Debug/
+WWW/obj/Debug/
