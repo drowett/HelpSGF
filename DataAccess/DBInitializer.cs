@@ -9,36 +9,40 @@ namespace DataAccess
 {
     public static class DbInitializer 
     {
+        private static HelpSGFContext _context;
+
         public static void Initialize(HelpSGFContext context)
         {
-            context.Database.EnsureCreated();
+            _context = context;
+            _context.Database.EnsureCreated();
 
-            if (context.Entities.Any())
+            if (_context.Entities.Any())
             {
                 return;
             }
 
-            BuildTagTypes(context);
-            var tags = BuildTags(context);
-            var entities = BuildEntities(context);
+            BuildTagTypes();
+            var tags = BuildTags();
+            var entities = BuildEntities();
 
-            BuildContacts(entities, tags.Where(W => W.TagType.AppliesTo == "contact").ToList(), context);
-            BuildEntityToTags(entities, tags.Where(W => W.TagType.AppliesTo == "company").ToList(), context);
+            BuildContacts(entities, tags.Where(W => W.TagType.AppliesTo == "contact").ToList());
+            BuildEntityToTags(entities, tags.Where(W => W.TagType.AppliesTo == "company").ToList());
         }
 
-        private static void BuildTagTypes(HelpSGFContext context)
+        private static void BuildTagTypes()
         {
             var tagTypes = new List<TagType>()
             {
                 new TagType(){ AppliesTo = "contact", ID = "contact", Name = "Contact" },
-                new TagType(){ AppliesTo = "company", ID = "service", Name = "Service" }
+                new TagType(){ AppliesTo = "company", ID = "service", Name = "Service" },
+                new TagType(){ AppliesTo = "person", ID = "person", Name = "Person" }
             };
 
-            tagTypes.ForEach(FE => context.TagTypes.Add(FE));
-            context.SaveChanges();
+            tagTypes.ForEach(FE => _context.TagTypes.Add(FE));
+            _context.SaveChanges();
         }
 
-        private static IList<Tag> BuildTags(HelpSGFContext context)
+        private static IList<Tag> BuildTags()
         {
             var tags = new List<Tag>()
             {
@@ -69,13 +73,13 @@ namespace DataAccess
 
             };
 
-            tags.ForEach(FE => context.Tags.Add(FE));
-            context.SaveChanges();
+            tags.ForEach(FE => _context.Tags.Add(FE));
+            _context.SaveChanges();
 
             return tags;
         }
 
-        private static IList<KeyValuePair<String, Entity>> BuildEntities(HelpSGFContext context)
+        private static IList<KeyValuePair<String, Entity>> BuildEntities()
         {
             var entities = new List<KeyValuePair<String, Entity>>();
 
@@ -92,19 +96,20 @@ namespace DataAccess
                     City = ele[5],
                     State = ele[6],
                     Zip = ele[7],
-                    County = ele[8]
+                    County = ele[8],
+                    IsSuppressed = false
                 };
 
                 entities.Add(new KeyValuePair<String, Entity>(ele[0], entity));
             }
 
-            entities.ForEach(FE => context.Entities.Add(FE.Value));
-            context.SaveChanges();
+            entities.ForEach(FE => _context.Entities.Add(FE.Value));
+            _context.SaveChanges();
 
             return entities;
         }
 
-        private static void BuildContacts(IList<KeyValuePair<String, Entity>> entities, IList<Tag> tags, HelpSGFContext context)
+        private static void BuildContacts(IList<KeyValuePair<String, Entity>> entities, IList<Tag> tags)
         {
             var contacts = new List<Contact>();
 
@@ -153,8 +158,8 @@ namespace DataAccess
                     contacts.Add(BuildContact(entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "contact_twitter").ID, ele[19]));
             }
 
-            contacts.ForEach(FE => context.Contacts.Add(FE));
-            context.SaveChanges();
+            contacts.ForEach(FE => _context.Contacts.Add(FE));
+            _context.SaveChanges();
             
         }
 
@@ -174,7 +179,7 @@ namespace DataAccess
             };
         }
 
-        private static void BuildEntityToTags(IList<KeyValuePair<String, Entity>> entities, IList<Tag> tags, HelpSGFContext context)
+        private static void BuildEntityToTags(IList<KeyValuePair<String, Entity>> entities, IList<Tag> tags)
         {
             var entitytoTags = new List<Entity_To_Tag>();
             var homelessData = HomelessData;
@@ -197,54 +202,54 @@ namespace DataAccess
 
                 // Add homeless
                 if (HomelessData.Any(A => A == entity.Key))
-                { 
-                    context.Entities_To_Tags.Add(BuildEntityToTag(entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_homeless").ID));
-                    context.SaveChanges();
+                {
+                    _context.Entities_To_Tags.Add(BuildEntityToTag(entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_homeless").ID));
+                    _context.SaveChanges();
                 }
 
                 // Add Dental
-                AddIfHasTag(entityDescription, dental, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_dental").ID, context);
+                AddIfHasTag(entityDescription, dental, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_dental").ID);
                 
                 // Add Medical
-                AddIfHasTag(entityDescription, medical, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_medical").ID, context);
+                AddIfHasTag(entityDescription, medical, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_medical").ID);
 
                 // Add Food
-                AddIfHasTag(entityDescription, food, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_foodpantry").ID, context);
+                AddIfHasTag(entityDescription, food, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_foodpantry").ID);
 
                 // Add Substance abuse
-                AddIfHasTag(entityDescription, substanceAbuse, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_substanceabuse").ID, context);
+                AddIfHasTag(entityDescription, substanceAbuse, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_substanceabuse").ID);
 
                 //Add Adoption
-                AddIfHasTag(entityDescription, adopt, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_adoption").ID, context);
+                AddIfHasTag(entityDescription, adopt, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_adoption").ID);
 
                 // Add Legal
-                AddIfHasTag(entityDescription, legal, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_legal").ID, context);
+                AddIfHasTag(entityDescription, legal, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_legal").ID);
 
                 // Add Veteran
-                AddIfHasTag(entityDescription, veteran, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_veteran").ID, context);
+                AddIfHasTag(entityDescription, veteran, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_veteran").ID);
 
                 // Add Men
-                AddIfHasTag(entityDescription, men, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_men").ID, context);
+                AddIfHasTag(entityDescription, men, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_men").ID);
 
                 // Add Woman
-                AddIfHasTag(entityDescription, women, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_women").ID, context);
+                AddIfHasTag(entityDescription, women, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_women").ID);
 
                 // Add Children
-                AddIfHasTag(entityDescription, child, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_children").ID, context);
+                AddIfHasTag(entityDescription, child, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_children").ID);
 
                 // Add Senior
-                AddIfHasTag(entityDescription, senior, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_senior").ID, context);
+                AddIfHasTag(entityDescription, senior, entity.Value.ID, tags.SingleOrDefault(SOD => SOD.ID == "service_senior").ID);
 
             }
         }
 
-        private static void AddIfHasTag(String[] description, String[] items, Guid entityID, String tagID, HelpSGFContext context)
+        private static void AddIfHasTag(String[] description, String[] items, Guid entityID, String tagID)
         {
             // Add Children
             if (description.Any(A => items.Contains(A)))
             {
-                context.Entities_To_Tags.Add(BuildEntityToTag(entityID, tagID));
-                context.SaveChanges();
+                _context.Entities_To_Tags.Add(BuildEntityToTag(entityID, tagID));
+                _context.SaveChanges();
             }
         }
 

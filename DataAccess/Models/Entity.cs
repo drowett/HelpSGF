@@ -33,6 +33,8 @@ namespace DataAccess.Models
         [StringLength(20)]
         public String Zip { get; set; }
 
+        public Boolean IsSuppressed { get; set; }
+
         public ICollection<Contact> Contacts { get; set; }
         public ICollection<Entity_To_Tag> Entity_To_Tags { get; set; }
     }
