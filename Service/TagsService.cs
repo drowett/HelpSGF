@@ -14,9 +14,22 @@ namespace Service
 
         //Gets
         // Async
-        public Task<List<TagType>> GetTagTypesAsync() => _context.TagTypes.ToListAsync();
+        public Task<List<TagType>> GetTagTypesAsync() => _context.TagTypes.Include(I => I.Tags).ToListAsync();
 
-        public Task<TagType> GetTagTypeAsync(String id) => _context.TagTypes.SingleOrDefaultAsync(SODA => SODA.ID == id);
+        public Task<TagType> GetTagTypeAsync(String id) => _context.TagTypes.Include(I => I.Tags).SingleOrDefaultAsync(SODA => SODA.ID == id);
+
+        public async Task<List<String>> GetAllTagTypesAppliesToAsync()
+        {
+            var appliesTo = new List<String>();
+
+            foreach(var tagType in await GetTagTypesAsync())
+            {
+                foreach (var item in tagType.AppliesTo.Split(',', StringSplitOptions.RemoveEmptyEntries))
+                    appliesTo.Add(item);
+            }
+
+            return appliesTo.Distinct().ToList();
+        }
 
         public Task<List<Tag>> GetTagsAsync() => _context.Tags.ToListAsync();
 
@@ -57,6 +70,22 @@ namespace Service
             _context.Add(tagType);
 
             return _context.SaveChanges();
+        }
+
+        public async Task<int> UpdateTagTypeAsync(TagType tagType)
+        {
+            var tagTypeToUpdate = await GetTagTypeAsync(tagType.ID);
+            var i = -1;
+
+            if (tagTypeToUpdate != null)
+            {
+                tagTypeToUpdate.Name = tagType.Name;
+                tagTypeToUpdate.AppliesTo = tagType.AppliesTo;
+
+                i = await _context.SaveChangesAsync();
+            }
+
+            return i;
         }
     }
 }

@@ -32,10 +32,11 @@ namespace WWW.Controllers
         // GET: TagTypes/Create
         public async Task<IActionResult> Create()
         {
-            var availableApliesTo = await _tagsService.GetTagTypesAsync();
+            var availableApliesTo = await _tagsService.GetAllTagTypesAppliesToAsync();
+
             var model = new TagTypeModel()
             {
-                AvailableAppliesTo = availableApliesTo.Select(S => new TagModel(S.AppliesTo, S.AppliesTo)).Distinct().ToArray()
+                AvailableAppliesTo = availableApliesTo.Select(S => new TagModel(S, S)).ToArray()
             };
 
             return View(model);
@@ -43,13 +44,13 @@ namespace WWW.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name")] TagTypeModel tagType, String[] SelectedTags)
+        public async Task<IActionResult> Create([Bind("Name")] TagTypeModel tagType, String[] AppliesTo)
         {
-            if (ModelState.IsValid && SelectedTags.Count() > 0)
+            if (ModelState.IsValid && AppliesTo.Any())
             {
                 var tagTypesAsync = await _tagsService.GetTagTypesAsync();
 
-                tagType.AppliesTo = SelectedTags;
+                tagType.AppliesTo = AppliesTo;
                 
                 await _tagsService.SaveTagTypeAsync(tagType.TagTypeModelDTO(true));
 
@@ -72,47 +73,31 @@ namespace WWW.Controllers
             if (tagType == null) return NotFound();
 
             var tagTypeModel = new TagTypeModel(tagType);
-            var availableApliesTo = await _tagsService.GetTagTypesAsync();
+            var availableApliesTo = await _tagsService.GetAllTagTypesAppliesToAsync();
 
-            tagTypeModel.AvailableAppliesTo = availableApliesTo.Select(S => new TagModel(S.AppliesTo, S.AppliesTo)).Distinct().ToArray();
+            tagTypeModel.AvailableAppliesTo = availableApliesTo.Select(S => new TagModel(S, S)).ToArray();
             
             return View(tagTypeModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("ID,Name")] TagType tagType, String[] SelectedTags)
+        public async Task<IActionResult> Edit(string id, [Bind("ID,Name")] TagTypeModel tagType, String[] AppliesTo)
         {
             if (id != tagType.ID) return NotFound();
 
-            if (ModelState.IsValid && SelectedTags.Count() > 0)
+            if (ModelState.IsValid && AppliesTo.Any())
             {
-                try
-                {
-                    _context.Update(tagType);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TagTypeExists(tagType.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                tagType.AppliesTo = AppliesTo;
+
+                var i = await _tagsService.UpdateTagTypeAsync(tagType.TagTypeModelDTO());
+                
+                if(i == -1)
+                    return NotFound();
 
                 return RedirectToAction(nameof(Index));
             }
             return View(tagType);
         }
-
-
-        //private bool TagTypeExists(string id)
-        //{
-        //    return _context.TagTypes.Any(e => e.ID == id);
-        //}
     }
 }

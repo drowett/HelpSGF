@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -17,5 +18,9 @@ namespace DataAccess.Models
         [Required]
         [StringLength(50)]
         public String AppliesTo { get; set; }
+
+        public String TagID { get; set; }
+
+        public ICollection<Tag> Tags { get; set; }
     }
 }

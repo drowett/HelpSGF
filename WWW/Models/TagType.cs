@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using WWW.Classes;
+using System.Linq;
 
 namespace WWW.Models
 {
@@ -16,16 +17,14 @@ namespace WWW.Models
         public String[] AppliesTo { get; set; }
         public IList<TagModel> AvailableAppliesTo { get; set; }
 
-        public String[] SelectedTags { get; set; }
-        public IList<TagModel> AvailableTags { get; set; }
+        public IList<TagModel> Tags { get; set; }
 
         public TagTypeModel()
         {
             AppliesTo = new String[] { };
-            SelectedTags = new String[] { };
 
             AvailableAppliesTo = new List<TagModel>();
-            AvailableTags = new List<TagModel>();
+            Tags = new List<TagModel>();
         }
 
         public TagTypeModel(DataAccess.Models.TagType tagType)
@@ -33,6 +32,7 @@ namespace WWW.Models
             ID = tagType.ID;
             Name = tagType.Name;
             AppliesTo = tagType.AppliesTo.Split(",");
+            Tags = tagType.Tags.Select(S => new TagModel(S)).OrderBy(O => O.Name).ToList();
         }
 
         public DataAccess.Models.TagType TagTypeModelDTO(Boolean generateID = false)

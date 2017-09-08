@@ -28,7 +28,7 @@
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.AppliesTo)
+                @String.Join(", ", item.AppliesTo)
             </td>
             <td>
                 <a asp-action="Edit" asp-route-id="@item.ID">Edit</a>
