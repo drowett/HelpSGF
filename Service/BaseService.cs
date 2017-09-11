@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using DataAccess;
+using DataAccess.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
+using System.Linq;
 
 namespace Service
 {

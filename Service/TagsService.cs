@@ -60,7 +60,8 @@ namespace Service
         // Async
         public async Task<int> SaveTagTypeAsync(TagType tagType)
         {
-            _context.Add(tagType);
+            //may wnt to add validation that this tagtypeID is not being used currently
+            await _context.AddAsync(tagType);
 
             return await _context.SaveChangesAsync();
         }
@@ -68,6 +69,20 @@ namespace Service
         public int SaveTagType(TagType tagType)
         {
             _context.Add(tagType);
+
+            return _context.SaveChanges();
+        }
+
+        public async Task<int> SaveTagAsync(Tag tag)
+        {
+            await _context.AddAsync(tag);
+
+            return await _context.SaveChangesAsync();
+        }
+
+        public int SaveTag(Tag tag)
+        {
+            _context.Add(tag);
 
             return _context.SaveChanges();
         }
@@ -81,6 +96,41 @@ namespace Service
             {
                 tagTypeToUpdate.Name = tagType.Name;
                 tagTypeToUpdate.AppliesTo = tagType.AppliesTo;
+
+                i = await _context.SaveChangesAsync();
+            }
+
+            return i;
+        }
+
+        public async Task<int> UpdateTagAsync(Tag tag)
+        {
+            var tagToUpdate = await GetTagAsync(tag.ID);
+            var i = -1;
+
+            if(tagToUpdate != null)
+            {
+                tagToUpdate.Name = tag.Name;
+
+                i = await _context.SaveChangesAsync();
+            }
+
+            return i;
+        }
+
+        public async Task<int> DeleteTagAsync(String id)
+        {
+            var tag = await GetTagAsync(id);
+            var i = -1;
+
+            if (tag != null)
+            {
+                foreach (var ett in tag.Entity_To_Tag)
+                {
+                    _context.Remove(ett);
+                }
+
+                _context.Remove(tag);
 
                 i = await _context.SaveChangesAsync();
             }

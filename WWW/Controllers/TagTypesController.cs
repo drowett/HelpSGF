@@ -9,6 +9,7 @@ using DataAccess;
 using DataAccess.Models;
 using Service;
 using WWW.Models;
+
 namespace WWW.Controllers
 {
     public class TagTypesController : Controller
@@ -36,7 +37,7 @@ namespace WWW.Controllers
 
             var model = new TagTypeModel()
             {
-                AvailableAppliesTo = availableApliesTo.Select(S => new TagModel(S, S)).ToArray()
+                AvailableAppliesTo = availableApliesTo.Select(S => new TagModel(S, S, "")).ToArray()
             };
 
             return View(model);
@@ -48,7 +49,7 @@ namespace WWW.Controllers
         {
             if (ModelState.IsValid && AppliesTo.Any())
             {
-                var tagTypesAsync = await _tagsService.GetTagTypesAsync();
+                //var tagTypesAsync = await _tagsService.GetTagTypesAsync();
 
                 tagType.AppliesTo = AppliesTo;
                 
@@ -59,7 +60,7 @@ namespace WWW.Controllers
 
             var availableApliesTo = await _tagsService.GetTagTypesAsync();
 
-            tagType.AvailableAppliesTo = availableApliesTo.Select(S => new TagModel(S.AppliesTo, S.AppliesTo)).Distinct().ToArray();
+            tagType.AvailableAppliesTo = availableApliesTo.Select(S => new TagModel(S.AppliesTo, S.AppliesTo, tagType.ID)).Distinct().ToArray();
 
             return View(tagType);
         }
@@ -75,7 +76,7 @@ namespace WWW.Controllers
             var tagTypeModel = new TagTypeModel(tagType);
             var availableApliesTo = await _tagsService.GetAllTagTypesAppliesToAsync();
 
-            tagTypeModel.AvailableAppliesTo = availableApliesTo.Select(S => new TagModel(S, S)).ToArray();
+            tagTypeModel.AvailableAppliesTo = availableApliesTo.Select(S => new TagModel(S, S, tagType.ID)).ToArray();
             
             return View(tagTypeModel);
         }

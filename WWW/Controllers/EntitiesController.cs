@@ -34,9 +34,6 @@ namespace WWW.Controllers
 
             ViewData["CurrentFilter"] = searchString;
 
-            //var tags = _tagsService.GetTagAsEnumberable().Select(S => new TagModel(S)).ToList();
-            //var entities = _entitiesService.GetEntities().Select(S => new EntityModel(S, tags));
-
             var tagsAsync = await _tagsService.GetTagsAsync();
             var entitiesAsync = await _entitiesService.GetEntitiesAsync();
 
