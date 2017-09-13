@@ -6,7 +6,6 @@ namespace WWW.Models
 {
     public class TagModel
     {
-        [Required]
         public String ID { get; set; }
 
         [Required]

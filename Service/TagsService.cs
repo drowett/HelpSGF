@@ -125,12 +125,15 @@ namespace Service
 
             if (tag != null)
             {
-                foreach (var ett in tag.Entity_To_Tag)
+                if (tag.Entity_To_Tag != null)
                 {
-                    _context.Remove(ett);
+                    foreach (var ett in tag.Entity_To_Tag)
+                    {
+                        _context.Entities_To_Tags.Remove(ett);
+                    }
                 }
 
-                _context.Remove(tag);
+                _context.Tags.Remove(tag);
 
                 i = await _context.SaveChangesAsync();
             }
