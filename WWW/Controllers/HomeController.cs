@@ -6,22 +6,22 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using WWW.Models;
 using Microsoft.Extensions.Options;
-using AppConfigurationSettings;
+//using AppConfigurationSettings;
 
 namespace WWW.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly IOptions<AppSettings> _appSettings;
+        //private readonly IOptions<AppSettings> _appSettings;
 
-        public HomeController(IOptions<AppSettings> appSettings)
+        public HomeController(/*IOptions<AppSettings> appSettings*/)
         {
-            _appSettings = appSettings;
+           // _appSettings = appSettings;
         }
 
         public IActionResult Index()
         {
-            ViewData["Source"] = _appSettings.Value.BaseURL;
+            //ViewData["Source"] = _appSettings.Value.BaseURL;
 
             return View();
         }

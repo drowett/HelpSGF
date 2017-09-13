@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
-using AppConfigurationSettings;
+//using AppConfigurationSettings;
 
 namespace WWW
 {
@@ -26,7 +26,7 @@ namespace WWW
             services.AddDbContext<DataAccess.HelpSGFContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+            //services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
 
             services.AddMvc();
         }
