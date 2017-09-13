@@ -1,43 +1,72 @@
-﻿@model IEnumerable<EntityModel>
+﻿@model PaginatedList<EntityModel>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h2>Index</h2>
+<h2>Entites (Companies, People, Services)</h2>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Create New Entity</a>
 </p>
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by name: <input type="text" name="SearchString" value="@ViewData["currentFilter"]" />
+            <input type="submit" value="Search" class="btn btn-default" /> |
+            <a asp-action="Index">Back to Full List</a>
+        </p>
+    </div>
+</form>
+@{
+    var prevDisabled = !Model.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.HasNextPage ? "disabled" : "";
+}
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-page="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-page="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
+@Model.PageIndex of @Model.TotalPages
 <table class="table">
     <thead>
         <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Name)
+                    <a asp-action="Index" asp-route-sortOrder="@ViewData["NameSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">Name</a>
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Description)
+                    Description
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Address1)
+                    Address
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Address2)
+                    <a asp-action="Index" asp-route-sortOrder="@ViewData["CitySortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">City</a>
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.City)
+                    <a asp-action="Index" asp-route-sortOrder="@ViewData["CountySortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">County</a>
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.County)
+                    <a asp-action="Index" asp-route-sortOrder="@ViewData["StateSortParm"]" asp-route-currentFilter="@ViewData["CurrentFilter"]">State</a>
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.State)
+                    Zip Code
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Zip)
+                    Type
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.IsSuppressed)
+                    Suppressed
                 </th>
             <th></th>
         </tr>
@@ -52,10 +81,7 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Address1)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Address2)
+                @Html.DisplayFor(modelItem => item.GetCombinedAddress)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.City)
@@ -70,15 +96,31 @@
                 @Html.DisplayFor(modelItem => item.Zip)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.IsSuppressed)
+                @Html.DisplayFor(modelItem => item.Type)
             </td>
-            <td><nobr>
-    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-</nobr>
+            <td>
+                @item.IsSuppressed
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a>
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-page="@(Model.PageIndex - 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @prevDisabled">
+    Previous
+</a>
+<a asp-action="Index"
+   asp-route-sortOrder="@ViewData["CurrentSort"]"
+   asp-route-page="@(Model.PageIndex + 1)"
+   asp-route-currentFilter="@ViewData["CurrentFilter"]"
+   class="btn btn-default @nextDisabled">
+    Next
+</a>
+@Model.PageIndex of @Model.TotalPages

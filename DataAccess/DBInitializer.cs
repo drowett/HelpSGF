@@ -97,6 +97,7 @@ namespace DataAccess
                     State = ele[6],
                     Zip = ele[7],
                     County = ele[8],
+                    Type = "company",
                     IsSuppressed = false
                 };
 

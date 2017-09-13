@@ -74,25 +74,11 @@ namespace WWW.Controllers
             return View(PaginatedList<EntityModel>.Create(entities.ToList(), page, pageSize));
         }
 
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null) return NotFound();
-
-            var entity = await _entitiesService.GetEntityAsync((Guid)id);
-            var tagsAsync = await _tagsService.GetTagsAsync();
-
-            if (entity == null) return NotFound();
-            
-            var tags = tagsAsync.Select(S => new TagModel(S)).ToList();
-            var model = new EntityModel(entity, tags);
-
-            return View(model);
-        }
-
-        // GET: Entities/Create
         public IActionResult Create()
         {
-            return View();
+            var model = new EntityModel();
+
+            return View(model);
         }
 
         // POST: Entities/Create
@@ -112,80 +98,55 @@ namespace WWW.Controllers
             return View(entity);
         }
 
-        // GET: Entities/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var entity = await _context.Entities.SingleOrDefaultAsync(m => m.ID == id);
-            if (entity == null)
-            {
-                return NotFound();
-            }
-            return View(entity);
+            var entityAsync = await _entitiesService.GetEntityAsync((Guid)id);
+
+            if (entityAsync == null) return NotFound();
+
+            var tagsAsync = await _tagsService.GetTagsAsync();
+
+            var tags = tagsAsync.Select(S => new TagModel(S)).ToList();
+            var entityModel = new EntityModel(entityAsync, tags);
+
+            return View(entityModel);
         }
 
         // POST: Entities/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("ID,Name,Description,Address1,Address2,City,County,State,Zip,IsSuppressed")] Entity entity)
-        {
-            if (id != entity.ID)
-            {
-                return NotFound();
-            }
+        //[HttpPost]
+        //[ValidateAntiForgeryToken]
+        //public async Task<IActionResult> Edit(Guid id, [Bind("ID,Name,Description,Address1,Address2,City,County,State,Zip,IsSuppressed")] Entity entity)
+        //{
+        //    if (id != entity.ID)
+        //    {
+        //        return NotFound();
+        //    }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(entity);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!EntityExists(entity.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(entity);
-        }
-
-        public async Task<IActionResult> Delete(Guid? id)
-        {
-            var entity = await _entitiesService.GetEntityAsync((Guid)id);
-
-            if (entity == null) return NotFound();
-
-            var model = new EntityModel(entity, new List<TagModel>());
-
-            return View(entity);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            await _entitiesService.DeleteEntityAsync(id);
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool EntityExists(Guid id)
-        {
-            return _context.Entities.Any(e => e.ID == id);
-        }
+        //    if (ModelState.IsValid)
+        //    {
+        //        try
+        //        {
+        //            _context.Update(entity);
+        //            await _context.SaveChangesAsync();
+        //        }
+        //        catch (DbUpdateConcurrencyException)
+        //        {
+        //            if (!EntityExists(entity.ID))
+        //            {
+        //                return NotFound();
+        //            }
+        //            else
+        //            {
+        //                throw;
+        //            }
+        //        }
+        //        return RedirectToAction(nameof(Index));
+        //    }
+        //    return View(entity);
+        //}
     }
 }

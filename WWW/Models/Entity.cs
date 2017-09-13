@@ -15,12 +15,20 @@ namespace WWW.Models
 
         public String Description { get; set; }
 
-        [Display(Name = "Address")]
         [StringLength(500)]
         public String Address1 { get; set; }
 
         [StringLength(500)]
         public String Address2 { get; set; }
+
+        [Display(Name = "Address")]
+        public String GetCombinedAddress
+        {
+            get
+            {
+                return Address1 + "\n" + Address2;
+            }
+        }
 
         [StringLength(100)]
         public String City { get; set; }
@@ -34,11 +42,23 @@ namespace WWW.Models
         [StringLength(20)]
         public String Zip { get; set; }
 
+        [Display(Name = "Location")]
+        public String GetCombinedLocation
+        {
+            get
+            {
+                return County + "\n" + City + "\n" + State + "\n" + Zip;
+            }
+        }
+
+        [StringLength(20)]
+        public String Type { get; set; }
+
         public Boolean IsSuppressed { get; set; }
 
         public IList<ContactModel> Contacts { get; set; }
 
-        public IList<TagModel> AvailableTags { get; set; }
+        //public IList<TagModel> AvailableTags { get; set; }
 
         public String[] SelectedTags { get; set; }
 
@@ -52,7 +72,7 @@ namespace WWW.Models
         public EntityModel()
         {
             Contacts = new List<ContactModel>();
-            AvailableTags = new List<TagModel>();
+           // AvailableTags = new List<TagModel>();
         }
 
         public EntityModel(DataAccess.Models.Entity entity, IList<TagModel> tags)
@@ -66,10 +86,11 @@ namespace WWW.Models
             State = entity.State;
             County = entity.County;
             Zip = entity.State;
+            Type = entity.Type;
             IsSuppressed = entity.IsSuppressed;
             Contacts = entity.Contacts.Select(S => new ContactModel(S)).ToList();
             SelectedTags = entity.Entity_To_Tags.Select(S => S.TagID).ToArray<String>();
-            AvailableTags = tags;
+            //AvailableTags = tags;
 
             SearchContainer = Name.ToLower() + " " + Description.ToLower() + " " + Address1.ToLower() + " " + Address2.ToLower();
         }
@@ -86,7 +107,9 @@ namespace WWW.Models
                 City = this.City,
                 State = this.State,
                 County = this.County,
-                Zip = this.State
+                Zip = this.State,
+                Type = this.Type,
+                IsSuppressed = this.IsSuppressed
 
                 //Current thinking about how we return tags for this entity
             };
