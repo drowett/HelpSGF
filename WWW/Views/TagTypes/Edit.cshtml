@@ -27,33 +27,33 @@
         </form>
     </div>
     <div class="col-md-2"></div>
-        <div class="col-md-6">
-            <h3>Associated Tags</h3>
-            <p><a asp-action="Create" asp-controller="Tags" asp-route-id="@Model.ID">Create New Tag</a></p>
-            <table>
-                <thead>
+    <div class="col-md-6">
+        <h3>Associated Tags</h3>
+        <p><a asp-action="Create" asp-controller="Tags" asp-route-id="@Model.ID">Create New Tag</a></p>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.Tags)
+                {
                     <tr>
-                        <th>Name</th>
-                        <th>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</th>
-                        <th></th>
+                        <td>@item.Name</td>
+                        <td></td>
+                        <td>
+                            <a asp-action="Edit" asp-controller="Tags" asp-route-id="@item.ID">Edit</a> |
+                            <a asp-action="Delete" asp-controller="Tags" asp-route-id="@item.ID">Delete</a>
+                        </td>
                     </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Tags)
-                    {
-                        <tr>
-                            <td>@item.Name</td>
-                            <td></td>
-                            <td>
-                                <a asp-action="Edit" asp-controller="Tags" asp-route-id="@item.ID">Edit</a> |
-                                <a asp-action="Delete" asp-controller="Tags" asp-route-id="@item.ID">Delete</a>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
+                }
+            </tbody>
+        </table>
     </div>
+</div>
 
 <div>
     <a asp-action="Index">Back to List</a>

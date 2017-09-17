@@ -14,13 +14,11 @@ namespace WWW.Controllers
 {
     public class EntitiesController : Controller
     {
-        private readonly HelpSGFContext _context;
         private readonly EntitiesService _entitiesService;
         private readonly TagsService _tagsService;
 
         public EntitiesController(HelpSGFContext context)
         {
-            _context = context;
             _entitiesService = new EntitiesService(context);
             _tagsService = new TagsService(context);
         }
@@ -86,16 +84,16 @@ namespace WWW.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Description,Address1,Address2,City,County,State,Zip,IsSuppressed")] Entity entity)
+        public async Task<IActionResult> Create([Bind("Name,Description,Address1,Address2,City,County,State,Zip,Type,IsSuppressed")] EntityModel entityModel)
         {
             if (ModelState.IsValid)
             {
-                entity.ID = Guid.NewGuid();
-                _context.Add(entity);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                await _entitiesService.SaveEntityAsync(entityModel.EntityModelDTO(true));
+
+                return RedirectToAction("Edit", new { id = entityModel.ID });
             }
-            return View(entity);
+
+            return View(entityModel);
         }
 
         public async Task<IActionResult> Edit(Guid? id)
@@ -107,8 +105,7 @@ namespace WWW.Controllers
             if (entityAsync == null) return NotFound();
 
             var tagsAsync = await _tagsService.GetTagsAsync();
-
-            var tags = tagsAsync.Select(S => new TagModel(S)).ToList();
+            var tags = tagsAsync.Where(W => W.TagType.AppliesTo.Contains(entityAsync.Type)).Select(S => new TagModel(S)).ToList();
             var entityModel = new EntityModel(entityAsync, tags);
 
             return View(entityModel);

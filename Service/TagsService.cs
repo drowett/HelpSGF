@@ -31,9 +31,9 @@ namespace Service
             return appliesTo.Distinct().ToList();
         }
 
-        public Task<List<Tag>> GetTagsAsync() => _context.Tags.ToListAsync();
+        public Task<List<Tag>> GetTagsAsync() => _context.Tags.Include(I => I.TagType).ToListAsync();
 
-        public Task<Tag> GetTagAsync(String id) => _context.Tags.SingleOrDefaultAsync(SODA => SODA.ID == id);
+        public Task<Tag> GetTagAsync(String id) => _context.Tags.Include(I => I.TagType).SingleOrDefaultAsync(SODA => SODA.ID == id);
         
         //Sync
         public IEnumerable<TagType> GetTagTypes()
@@ -87,6 +87,7 @@ namespace Service
             return _context.SaveChanges();
         }
 
+        //Modify
         public async Task<int> UpdateTagTypeAsync(TagType tagType)
         {
             var tagTypeToUpdate = await GetTagTypeAsync(tagType.ID);
@@ -118,6 +119,7 @@ namespace Service
             return i;
         }
 
+        //Delete
         public async Task<int> DeleteTagAsync(String id)
         {
             var tag = await GetTagAsync(id);

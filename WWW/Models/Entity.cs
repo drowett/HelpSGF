@@ -7,7 +7,6 @@ namespace WWW.Models
 {
     public class EntityModel
     {
-        [Required]
         public Guid ID { get; set; }
 
         [Required]
@@ -51,14 +50,15 @@ namespace WWW.Models
             }
         }
 
+        [Required]
         [StringLength(20)]
         public String Type { get; set; }
 
         public Boolean IsSuppressed { get; set; }
 
-        public IList<ContactModel> Contacts { get; set; }
+        public IList<ContactModelWithTags> Contacts { get; set; }
 
-        //public IList<TagModel> AvailableTags { get; set; }
+        public IList<TagModel> AvailableTags { get; set; }
 
         public String[] SelectedTags { get; set; }
 
@@ -71,8 +71,8 @@ namespace WWW.Models
 
         public EntityModel()
         {
-            Contacts = new List<ContactModel>();
-           // AvailableTags = new List<TagModel>();
+            Contacts = new List<ContactModelWithTags>();
+            AvailableTags = new List<TagModel>();
         }
 
         public EntityModel(DataAccess.Models.Entity entity, IList<TagModel> tags)
@@ -88,15 +88,25 @@ namespace WWW.Models
             Zip = entity.State;
             Type = entity.Type;
             IsSuppressed = entity.IsSuppressed;
-            Contacts = entity.Contacts.Select(S => new ContactModel(S)).ToList();
-            SelectedTags = entity.Entity_To_Tags.Select(S => S.TagID).ToArray<String>();
-            //AvailableTags = tags;
+
+            Contacts = (entity.Contacts != null) ?
+                entity.Contacts.Select(S => new ContactModelWithTags(S)).ToList() :
+                new List<ContactModelWithTags>();
+
+            SelectedTags = (entity.Entity_To_Tags != null) ?
+                entity.Entity_To_Tags.Select(S => S.TagID).ToArray<String>() :
+                new String[] { };
+
+            AvailableTags = tags;
 
             SearchContainer = Name.ToLower() + " " + Description.ToLower() + " " + Address1.ToLower() + " " + Address2.ToLower();
         }
 
-        public  DataAccess.Models.Entity EntityModelDTO()
+        public  DataAccess.Models.Entity EntityModelDTO(Boolean generateID = false)
         {
+            if (generateID)
+                this.ID = Guid.NewGuid();
+
             return new DataAccess.Models.Entity()
             {
                 ID = this.ID,

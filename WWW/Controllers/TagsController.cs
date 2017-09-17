@@ -21,11 +21,11 @@ namespace WWW.Controllers
             _tagsService = new TagsService(context);
         }
 
-        public IActionResult Create(String ID)
+        public IActionResult Create(String id)
         {
             var model = new TagModel()
             {
-                TagTypeID = ID
+                TagTypeID = id
             };
 
             return View(model);
