@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WWW.Models
 {
-    public class ContactModelWithTags
+    public class ContactModel
     {
         public Guid ID { get; set; }
 
@@ -19,9 +19,9 @@ namespace WWW.Models
         [Required]
         public String Value { get; set; }
 
-        public ContactModelWithTags() { }
+        public ContactModel() { }
 
-        public ContactModelWithTags(DataAccess.Models.Contact contact)
+        public ContactModel(DataAccess.Models.Contact contact)
         {
             ID = contact.ID;
             EntityID = contact.EntityID;
@@ -44,7 +44,7 @@ namespace WWW.Models
         }
     }
 
-    public class ContactModelWithContacts : ContactModelWithTags
+    public class ContactModelWithContacts : ContactModel
     {
         public IList<TagModel> Tags { get; set; }
         public ContactModelWithContacts() : base() { }

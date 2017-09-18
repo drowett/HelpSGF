@@ -79,6 +79,8 @@ namespace WWW.Controllers
 
         public async Task<IActionResult> Delete(String id)
         {
+            if (String.IsNullOrEmpty(id)) return NotFound();
+
             var tag = await _tagsService.GetTagAsync(id);
 
             if (tag == null) return NotFound();

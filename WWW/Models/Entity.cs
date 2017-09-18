@@ -56,7 +56,7 @@ namespace WWW.Models
 
         public Boolean IsSuppressed { get; set; }
 
-        public IList<ContactModelWithTags> Contacts { get; set; }
+        public IList<ContactModel> Contacts { get; set; }
 
         public IList<TagModel> AvailableTags { get; set; }
 
@@ -71,7 +71,7 @@ namespace WWW.Models
 
         public EntityModel()
         {
-            Contacts = new List<ContactModelWithTags>();
+            Contacts = new List<ContactModel>();
             AvailableTags = new List<TagModel>();
         }
 
@@ -90,8 +90,8 @@ namespace WWW.Models
             IsSuppressed = entity.IsSuppressed;
 
             Contacts = (entity.Contacts != null) ?
-                entity.Contacts.Select(S => new ContactModelWithTags(S)).ToList() :
-                new List<ContactModelWithTags>();
+                entity.Contacts.Select(S => new ContactModel(S)).ToList() :
+                new List<ContactModel>();
 
             SelectedTags = (entity.Entity_To_Tags != null) ?
                 entity.Entity_To_Tags.Select(S => S.TagID).ToArray<String>() :

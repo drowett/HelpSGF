@@ -73,12 +73,12 @@
     </div>
     <div class="col-md-1">
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         tags
     </div>
     <div class="col-md-4">
         <h3>Contacts</h3>
-        <p><a asp-action="Create" asp-controller="Contacts" asp-route-id="@Model.ID">Create New Contact</a></p>
+        <p><a asp-action="Edit" asp-controller="Contacts" asp-route-id="@Model.ID">Create New Contact</a></p>
         <table>
             <thead>
                 <tr>
@@ -92,10 +92,12 @@
                 {
                     <tr>
                         <td>@item.Name</td>
-                        <td></td>
+                        <td>@item.Value</td>
                         <td>
-                            <a asp-action="Edit" asp-controller="Tags" asp-route-id="@item.ID">Edit</a> |
-                            <a asp-action="Delete" asp-controller="Tags" asp-route-id="@item.ID">Delete</a>
+                            <nobr>
+                                <a asp-action="Edit" asp-controller="Contacts" asp-route-id="@item.ID">Edit</a> |
+                                <a asp-action="Delete" asp-controller="Contacts" asp-route-id="@item.ID">Delete</a>
+                            </nobr>
                         </td>
                     </tr>
                 }

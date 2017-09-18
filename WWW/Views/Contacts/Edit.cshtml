@@ -4,13 +4,14 @@
     ViewData["Title"] = "Create";
 }
 
-<h2>Create Contact</h2>
+<h2>Edit Contact - @Model.Name</h2>
 
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID" />
             <input type="hidden" asp-for="EntityID" />
             <div class="form-group">
                 <label asp-for="TagID" class="control-label">Contact Type</label><br />
@@ -23,7 +24,7 @@
                 <span asp-validation-for="Value" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Update" class="btn btn-default" />
             </div>
         </form>
     </div>

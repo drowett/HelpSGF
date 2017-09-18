@@ -23,11 +23,11 @@ namespace Service
             return _context.Entities.Include(I => I.Contacts).Include(I2 => I2.Entity_To_Tags);
         }
 
-        public Task<Entity> GetEntityAsync(Guid id) => _context.Entities.SingleOrDefaultAsync(SODA => SODA.ID == id);
+        public Task<Entity> GetEntityAsync(Guid id) => _context.Entities.Include(I => I.Contacts).SingleOrDefaultAsync(SODA => SODA.ID == id);
 
         public Entity GetEntity(Guid id)
         {
-            return _context.Entities.SingleOrDefault(SOD => SOD.ID == id);
+            return _context.Entities.Include(I => I.Contacts).SingleOrDefault(SOD => SOD.ID == id);
         }
 
         public Task<Contact> GetContactAsync(Guid id) => _context.Contacts.SingleOrDefaultAsync(SODA => SODA.ID == id);
@@ -54,9 +54,10 @@ namespace Service
 
         public async Task<int> SaveContactAsync(Contact contact)
         {
-            await _context.AddAsync(contact);
+            var ii = await _context.AddAsync(contact);
 
-            return await _context.SaveChangesAsync();
+            var i = await _context.SaveChangesAsync();
+            return i;
         }
 
         public int SaveContact(Contact contact)
@@ -123,6 +124,8 @@ namespace Service
             if(contactToSave != null)
             {
                 contactToSave.Value = contact.Value;
+                contactToSave.TagID = contact.TagID;
+
                 i = await _context.SaveChangesAsync();
             }
 
@@ -161,5 +164,35 @@ namespace Service
             return _context.SaveChanges();
         }
 
+
+        //Delete
+        public async Task<int> DeleteContactAsync(Guid id)
+        {
+            var contact = await GetContactAsync(id);
+            var i = -1;
+
+            if(contact != null)
+            {
+                _context.Remove(contact);
+
+                i = await _context.SaveChangesAsync();
+            }
+
+            return i;
+        }
+
+        public int DeleteContact(Guid id)
+        {
+            var contact = GetContact(id);
+            var i = 1;
+
+            if(contact != null)
+            {
+                _context.Remove(contact);
+                i =_context.SaveChanges();
+            }
+
+            return i;
+        }
     }
 }
