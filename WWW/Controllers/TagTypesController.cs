@@ -49,8 +49,6 @@ namespace WWW.Controllers
         {
             if (ModelState.IsValid && AppliesTo.Any())
             {
-                //var tagTypesAsync = await _tagsService.GetTagTypesAsync();
-
                 tagType.AppliesTo = AppliesTo;
                 
                 await _tagsService.SaveTagTypeAsync(tagType.TagTypeModelDTO(true));
@@ -93,8 +91,7 @@ namespace WWW.Controllers
 
                 var i = await _tagsService.UpdateTagTypeAsync(tagType.TagTypeModelDTO());
                 
-                if(i == -1)
-                    return NotFound();
+                if(i == -1) return NotFound();
 
                 return RedirectToAction(nameof(Index));
             }

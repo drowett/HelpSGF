@@ -19,8 +19,6 @@ namespace DataAccess.Models
         [StringLength(50)]
         public String AppliesTo { get; set; }
 
-        public String TagID { get; set; }
-
         public ICollection<Tag> Tags { get; set; }
     }
 }

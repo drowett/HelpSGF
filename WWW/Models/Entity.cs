@@ -71,8 +71,7 @@ namespace WWW.Models
 
         public EntityModel()
         {
-            Contacts = new List<ContactModel>();
-            AvailableTags = new List<TagModel>();
+            LoadLists(null, null, null);
         }
 
         public EntityModel(DataAccess.Models.Entity entity, IList<TagModel> tags)
@@ -89,17 +88,21 @@ namespace WWW.Models
             Type = entity.Type;
             IsSuppressed = entity.IsSuppressed;
 
-            Contacts = (entity.Contacts != null) ?
-                entity.Contacts.Select(S => new ContactModel(S)).ToList() :
+            SearchContainer = Name.ToLower() + " " + Description.ToLower() + " " + Address1.ToLower() + " " + Address2.ToLower();
+            LoadLists(entity.Contacts, entity.Entity_To_Tags, tags);
+        }
+
+        public void LoadLists(ICollection<DataAccess.Models.Contact> contacts, ICollection<DataAccess.Models.Entity_To_Tag> entityToTags, IList<TagModel> tags)
+        {
+            Contacts = (contacts != null) ?
+                contacts.Select(S => new ContactModel(S)).ToList() :
                 new List<ContactModel>();
 
-            SelectedTags = (entity.Entity_To_Tags != null) ?
-                entity.Entity_To_Tags.Select(S => S.TagID).ToArray<String>() :
+            SelectedTags = (entityToTags != null) ?
+                entityToTags.Select(S => S.TagID).ToArray<String>() :
                 new String[] { };
 
             AvailableTags = tags;
-
-            SearchContainer = Name.ToLower() + " " + Description.ToLower() + " " + Address1.ToLower() + " " + Address2.ToLower();
         }
 
         public  DataAccess.Models.Entity EntityModelDTO(Boolean generateID = false)

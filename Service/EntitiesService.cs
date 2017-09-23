@@ -23,11 +23,14 @@ namespace Service
             return _context.Entities.Include(I => I.Contacts).Include(I2 => I2.Entity_To_Tags);
         }
 
-        public Task<Entity> GetEntityAsync(Guid id) => _context.Entities.Include(I => I.Contacts).SingleOrDefaultAsync(SODA => SODA.ID == id);
+        public Task<Entity> GetEntityAsync(Guid id) => _context.Entities
+                    .Include(I => I.Contacts)
+                    .Include(I2 => I2.Entity_To_Tags)
+                    .SingleOrDefaultAsync(SODA => SODA.ID == id);
 
         public Entity GetEntity(Guid id)
         {
-            return _context.Entities.Include(I => I.Contacts).SingleOrDefault(SOD => SOD.ID == id);
+            return _context.Entities.Include(I => I.Contacts).Include(I2 => I2.Entity_To_Tags).SingleOrDefault(SOD => SOD.ID == id);
         }
 
         public Task<Contact> GetContactAsync(Guid id) => _context.Contacts.SingleOrDefaultAsync(SODA => SODA.ID == id);
@@ -68,7 +71,7 @@ namespace Service
         }
 
         //Modify
-        public async Task<int> UpdateEntityAsync(Entity entity)
+        public async Task<int> UpdateEntityAsync(Entity entity, String[] entityToTags)
         {
             var entityToSave = await GetEntityAsync(entity.ID);
             var i = -1;
@@ -86,13 +89,33 @@ namespace Service
                 entityToSave.Type = entity.Type;
                 entityToSave.IsSuppressed = entity.IsSuppressed;
 
+                //Remove the old
+                if (entityToSave.Entity_To_Tags != null)
+                {
+                    foreach (var ett in entityToSave.Entity_To_Tags)
+                    {
+                        _context.Entities_To_Tags.Remove(ett);
+                    }
+                }
+                //Add the new
+                foreach (var ett in entityToTags)
+                {
+                    var newEtt = new Entity_To_Tag()
+                    {
+                        EntityID = entityToSave.ID,
+                        TagID = ett
+                    };
+                    
+                    _context.Entities_To_Tags.Add(newEtt);
+                }
+
                 i = await _context.SaveChangesAsync();
             }
 
             return i;
         }
 
-        public int UpdateEntity(Entity entity)
+        public int UpdateEntity(Entity entity, String[] entityToTags)
         {
             var entityToSave = GetEntity(entity.ID);
             var i = -1;
@@ -163,7 +186,6 @@ namespace Service
 
             return _context.SaveChanges();
         }
-
 
         //Delete
         public async Task<int> DeleteContactAsync(Guid id)

@@ -111,39 +111,33 @@ namespace WWW.Controllers
             return View(entityModel);
         }
 
-        // POST: Entities/Edit/5
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        //[HttpPost]
-        //[ValidateAntiForgeryToken]
-        //public async Task<IActionResult> Edit(Guid id, [Bind("ID,Name,Description,Address1,Address2,City,County,State,Zip,IsSuppressed")] Entity entity)
-        //{
-        //    if (id != entity.ID)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(Guid id, [Bind("ID,Name,Description,Address1,Address2,City,County,State,Zip,Type,IsSuppressed")] EntityModel entity, String[] SelectedTags)
+        {
+            if (id != entity.ID) return NotFound();
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        try
-        //        {
-        //            _context.Update(entity);
-        //            await _context.SaveChangesAsync();
-        //        }
-        //        catch (DbUpdateConcurrencyException)
-        //        {
-        //            if (!EntityExists(entity.ID))
-        //            {
-        //                return NotFound();
-        //            }
-        //            else
-        //            {
-        //                throw;
-        //            }
-        //        }
-        //        return RedirectToAction(nameof(Index));
-        //    }
-        //    return View(entity);
-        //}
+            if (ModelState.IsValid)
+            {
+                var i = await _entitiesService.UpdateEntityAsync(entity.EntityModelDTO(), SelectedTags);
+
+                if (i == -1) return NotFound();
+
+                return RedirectToAction(nameof(Index));
+            }
+
+            var entityAsync = await _entitiesService.GetEntityAsync((Guid)id);
+
+            if (entityAsync == null) return NotFound();
+
+            var tagsAsync = await _tagsService.GetTagsAsync();
+            var tags = tagsAsync.Where(W => W.TagType.AppliesTo.Contains(entityAsync.Type)).Select(S => new TagModel(S)).ToList();
+
+            entity.LoadLists(entityAsync.Contacts, entityAsync.Entity_To_Tags, tags);
+
+            entity.SelectedTags = SelectedTags;
+
+            return View(entity);
+        }
     }
 }

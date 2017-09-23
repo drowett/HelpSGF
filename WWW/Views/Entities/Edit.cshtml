@@ -1,13 +1,13 @@
 ﻿@model EntityModel
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Edit";
 }
 <h2>Edit Entity - @Model.Name</h2>
 
 <hr />
 <div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
+    <form asp-action="Edit">
+        <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -67,43 +67,49 @@
                 </div>
             </div>
             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Save" class="btn btn-default" />
             </div>
-        </form>
-    </div>
-    <div class="col-md-1">
-    </div>
-    <div class="col-md-2">
-        tags
-    </div>
-    <div class="col-md-4">
-        <h3>Contacts</h3>
-        <p><a asp-action="Edit" asp-controller="Contacts" asp-route-id="@Model.ID">Create New Contact</a></p>
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Value</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model.Contacts)
-                {
+        </div>
+        <div class="col-md-1">
+        </div>
+        <div class="col-md-2">
+            @foreach (var tagType in Model.AvailableTags.GroupBy(GB => GB.TagTypeName))
+            {
+                <div class="form-group">
+                    <label asp-for="SelectedTags" class="control-label">@tagType.Key</label><br />
+                @Html.ListBoxFor(m => m.SelectedTags, new MultiSelectList(tagType, "ID", "Name"), new { @class = "select2" })
+            </div>
+            }
+        </div>
+    </form>
+        <div class="col-md-4">
+            <h3>Contacts</h3>
+            <p><a asp-action="Edit" asp-controller="Contacts" asp-route-id="@Model.ID">Create New Contact</a></p>
+            <table>
+                <thead>
                     <tr>
-                        <td>@item.Name</td>
-                        <td>@item.Value</td>
-                        <td>
-                            <nobr>
-                                <a asp-action="Edit" asp-controller="Contacts" asp-route-id="@item.ID">Edit</a> |
-                                <a asp-action="Delete" asp-controller="Contacts" asp-route-id="@item.ID">Delete</a>
-                            </nobr>
-                        </td>
+                        <th>Name</th>
+                        <th>Value</th>
+                        <th></th>
                     </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Contacts)
+                    {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Value</td>
+                            <td>
+                                <nobr>
+                                    <a asp-action="Edit" asp-controller="Contacts" asp-route-id="@item.ID">Edit</a> |
+                                    <a asp-action="Delete" asp-controller="Contacts" asp-route-id="@item.ID">Delete</a>
+                                </nobr>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
 </div>
 <hr />
 <div class="row">

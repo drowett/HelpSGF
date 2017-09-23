@@ -13,6 +13,8 @@ namespace WWW.Models
 
         public String TagTypeID { get; set; }
 
+        public String TagTypeName { get; set; }
+
         public TagModel() { }
 
         public TagModel(DataAccess.Models.Tag tag)
@@ -20,6 +22,7 @@ namespace WWW.Models
             ID = tag.ID;
             Name = tag.Name;
             TagTypeID = tag.TagTypeID;
+            TagTypeName = tag.TagType.Name;
         }
 
         public TagModel(String id, String name, String tagTypeID)
