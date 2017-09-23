@@ -133,6 +133,50 @@ namespace Service
                 entityToSave.Type = entity.Type;
                 entityToSave.IsSuppressed = entity.IsSuppressed;
 
+                //Remove the old
+                if (entityToSave.Entity_To_Tags != null)
+                {
+                    foreach (var ett in entityToSave.Entity_To_Tags)
+                    {
+                        _context.Entities_To_Tags.Remove(ett);
+                    }
+                }
+                //Add the new
+                foreach (var ett in entityToTags)
+                {
+                    var newEtt = new Entity_To_Tag()
+                    {
+                        EntityID = entityToSave.ID,
+                        TagID = ett
+                    };
+
+                    _context.Entities_To_Tags.Add(newEtt);
+                }
+
+                i = _context.SaveChanges();
+            }
+
+            return i;
+        }
+
+        public int UpdateEntity(Entity entity, String[] entityToTags)
+        {
+            var entityToSave = GetEntity(entity.ID);
+            var i = -1;
+
+            if (entityToSave != null)
+            {
+                entityToSave.Name = entity.Name;
+                entityToSave.Description = entity.Description;
+                entityToSave.Address1 = entity.Address1;
+                entityToSave.Address2 = entity.Address2;
+                entityToSave.City = entity.City;
+                entityToSave.County = entity.County;
+                entityToSave.State = entity.State;
+                entityToSave.Zip = entity.Zip;
+                entityToSave.Type = entity.Type;
+                entityToSave.IsSuppressed = entity.IsSuppressed;
+
                 i =  _context.SaveChanges();
             }
 
