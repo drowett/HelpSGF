@@ -159,30 +159,6 @@ namespace Service
             return i;
         }
 
-        public int UpdateEntity(Entity entity, String[] entityToTags)
-        {
-            var entityToSave = GetEntity(entity.ID);
-            var i = -1;
-
-            if (entityToSave != null)
-            {
-                entityToSave.Name = entity.Name;
-                entityToSave.Description = entity.Description;
-                entityToSave.Address1 = entity.Address1;
-                entityToSave.Address2 = entity.Address2;
-                entityToSave.City = entity.City;
-                entityToSave.County = entity.County;
-                entityToSave.State = entity.State;
-                entityToSave.Zip = entity.Zip;
-                entityToSave.Type = entity.Type;
-                entityToSave.IsSuppressed = entity.IsSuppressed;
-
-                i =  _context.SaveChanges();
-            }
-
-            return i;
-        }
-
         public async Task<int> UpdateContactAsync(Contact contact)
         {
             var contactToSave = await GetContactAsync(contact.ID);
