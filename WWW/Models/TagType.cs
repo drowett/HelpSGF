@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using WWW.Classes;
+using WWW.ExtensionMethods;
 using System.Linq;
 
 namespace WWW.Models

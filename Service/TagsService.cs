@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Linq;
 
-namespace Service
+namespace Services
 {
     public class TagsService : BaseService
     {

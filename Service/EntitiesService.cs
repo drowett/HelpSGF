@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System.Linq;
 
-namespace Service
+namespace Services
 {
     public class EntitiesService : BaseService
     {
-        public EntitiesService(HelpSGFContext content) : base(content) { }
+        public EntitiesService(HelpSGFContext context) : base(context) { }
 
         //Gets
         public Task<List<Entity>> GetEntitiesAsync() => _context.Entities

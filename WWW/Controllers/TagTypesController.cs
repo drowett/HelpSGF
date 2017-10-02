@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DataAccess;
 using DataAccess.Models;
-using Service;
+using Services;
 using WWW.Models;
 
 namespace WWW.Controllers

@@ -1,7 +1,7 @@
 ﻿
 using System.Text;
 
-namespace WWW.Classes
+namespace WWW.ExtensionMethods
 {
     public static class ExtensionMethods
     {

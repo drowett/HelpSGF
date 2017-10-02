@@ -8,13 +8,9 @@ using System.Linq;
 
 namespace Services
 {
-    public class BaseService
+    public class UsersService : BaseService
     {
-        protected readonly HelpSGFContext _context;
+        public UsersService(HelpSGFContext context) : base(context) { }
 
-        public BaseService( HelpSGFContext context)
-        {
-            _context = context;
-        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
-using WWW.Classes;
+using WWW.ExtensionMethods;
 
 namespace WWW.Models
 {

@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 //using AppConfigurationSettings;
+using WWW.Models;
+using Services;
 
 namespace WWW
 {
@@ -27,6 +30,39 @@ namespace WWW
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             //services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
+
+            services.AddIdentity<ApplicationUser, IdentityRole>()
+                .AddEntityFrameworkStores<DataAccess.HelpSGFContext>()
+                .AddDefaultTokenProviders();
+
+            services.Configure<IdentityOptions>(O =>
+            {
+                O.Password.RequireDigit = true;
+                O.Password.RequiredLength = 8;
+                O.Password.RequireNonAlphanumeric = false;
+                O.Password.RequireUppercase = true;
+                O.Password.RequireLowercase = false;
+                O.Password.RequiredUniqueChars = 6;
+
+                O.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(30);
+                O.Lockout.MaxFailedAccessAttempts = 10;
+                O.Lockout.AllowedForNewUsers = true;
+
+                O.User.RequireUniqueEmail = true;
+            });
+
+            services.ConfigureApplicationCookie(O =>
+            {
+                O.Cookie.HttpOnly = true;
+                O.Cookie.Expiration = TimeSpan.FromDays(150);
+                O.LoginPath = "/Account/Login";
+                O.LogoutPath = "/Account/Logout";
+                O.AccessDeniedPath = "/Account/AccessDenied";
+                O.SlidingExpiration = true;
+            });
+
+            // Add application services.
+            services.AddTransient<IEmailSender, EmailSender>();
 
             services.AddMvc();
         }
